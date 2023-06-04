@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Image Processing</title>
+        <style>
+            #drop_zone {
+                border: 2px dashed #bbb;
+                padding: 50px;
+                width: 200px;
+                height: 200px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="file" id="fileUpload" accept="image/*" />
+        <div id="drop_zone">Drop files here</div>
+        <img id="uploadedImage" style="display:none"/>
+        <canvas id="canvas"></canvas>
+        
+        <label for="colorChoice">Choose a color:</label>
+        <select name="colors" id="colorChoice">
+            <option value="yellow">Yellow</option>
+            <option value="violet">Violet</option>
+        </select>
+
+        <label for="circleSize">Circle Size:</label>
+        <input type="range" id="circleSize" name="circleSize" min="1" max="100">
+        <span id="circleSizeValue"></span>
+
+        <label for="circleThickness">Circle Thickness:</label>
+        <input type="range" id="circleThickness" name="circleThickness" min="1" max="10">
+        <span id="circleThicknessValue"></span>
+
+        <label for="threshold">Threshold:</label>
+        <input type="range" id="threshold" name="threshold" min="0" max="255" value="25">
+        <span id="thresholdValue"></span>
+
+        <button id="processImage">Process Image</button>
+
+        <script>
+            const dropZone = document.getElementById('drop_zone');
+            const fileUpload = document.getElementById('fileUpload');
+            const uploadedImage = document.getElementById('uploadedImage');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Value displays
+            const circleSizeValue = document.getElementById('circleSizeValue');
+            const circleThicknessValue = document.getElementById('circleThicknessValue');
+            const thresholdValue = document.getElementById('thresholdValue');
+
+            // Event handlers
+            dropZone.addEventListener('dragover', (e) => e.preventDefault());
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUpload.files = e.dataTransfer.files;
+                handleFiles();
+            });
+
+            fileUpload.addEventListener('change', handleFiles);
+
+            // Input event handlers to display values
+            document.getElementById('circleSize').addEventListener('input', (e) => {
+                circleSizeValue.textContent = e.target.value;
+            });
+
+            document.getElementById('circleThickness').addEventListener('input', (e) => {
+                circleThicknessValue.textContent = e.target.value;
+            });
+
+            document.getElementById('threshold').addEventListener('input', (e) => {
+                thresholdValue.textContent = e.target.value;
+            });
+
+            // Button to trigger image processing
+            document.getElementById('processImage').addEventListener('click', processImage);
+
+            // Function to handle file upload/drop
+            function handleFiles() {
+                const file = fileUpload.files[0];
+                uploadedImage.src = URL.createObjectURL(file);
+            }
+
+            function processImage() {
+                let circleCounter = 0;
+                // Setting canvas width to browser width
+                canvas.width = window.innerWidth;
+                let scale = canvas.width / uploadedImage.width;
+                canvas.height = uploadedImage.height * scale;
+                ctx.drawImage(uploadedImage, 0, 0, canvas.width, canvas.height);
+                let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                let data = imageData.data;
+
+                for(let i = 0; i < data.length && circleCounter < 250; i += 4) {
+                    let r = data[i];
+                    let g = data[i+1];
+                    let b = data[i+2];
+                    
+                    let threshold = document.getElementById('threshold').value;
+                    if(!(r <= threshold && g <= threshold && b <= threshold)) {
+                        let circleSize = document.getElementById('circleSize').value;
+                        let circleColor = document.getElementById('colorChoice').value;
+                        let circleThickness = document.getElementById('circleThickness').value;
+                        let x = (i / 4) % canvas.width;
+                        let y = Math.floor((i / 4) / canvas.width);
+
+                        ctx.beginPath();
+                        ctx.arc(x, y, circleSize, 0, 2 * Math.PI, false);
+                        ctx.lineWidth = circleThickness;
+                        ctx.strokeStyle = circleColor;
+                        ctx.stroke();
+
+                        circleCounter++;
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
