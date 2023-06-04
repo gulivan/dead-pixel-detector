@@ -53,6 +53,7 @@
         <label for="colorChoice">Choose a color:</label>
         <div class="input-wrapper">
             <select name="colors" id="colorChoice">
+                <option value="pixel_color">Stuck Pixel Color</option>
                 <option value="yellow">Yellow</option>
                 <option value="orange">Orange</option>
                 <option value="pink">Pink</option>
@@ -71,6 +72,12 @@
         <div class="input-wrapper">
             <input type="range" id="circleThickness" name="circleThickness" min="1" max="10" value="2">
             <span id="circleThicknessValue"></span>
+        </div>
+
+        <label for="maxCircles">Max circles:</label>
+        <div class="input-wrapper">
+            <input type="range" id="maxCircles" name="maxCircles" min="10" max="300" value="100">
+            <span id="maxCirclesValue"></span>
         </div>
 
         <label for="threshold">Threshold:</label>
@@ -102,6 +109,7 @@
         // Value displays
         const circleSizeValue = document.getElementById('circleSizeValue');
         const circleThicknessValue = document.getElementById('circleThicknessValue');
+        const maxCirclesValue = document.getElementById('maxCirclesValue');
         const thresholdValue = document.getElementById('thresholdValue');
         const magnifyPowerValue = document.getElementById('magnifyPowerValue');
 
@@ -122,6 +130,10 @@
 
         document.getElementById('circleThickness').addEventListener('input', (e) => {
             circleThicknessValue.textContent = e.target.value;
+        });
+
+        document.getElementById('maxCircles').addEventListener('input', (e) => {
+            maxCirclesValue.textContent = e.target.value;
         });
 
         document.getElementById('threshold').addEventListener('input', (e) => {
@@ -156,16 +168,22 @@
             ctx.drawImage(uploadedImage, 0, 0, canvas.width, canvas.height);
             let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let data = imageData.data;
+            let max_circles = document.getElementById('maxCircles').value;
 
-            for(let i = 0; i < data.length && circleCounter < 100; i += 4) {
+            for(let i = 0; i < data.length && circleCounter <= max_circles; i += 4) {
                 let r = data[i];
                 let g = data[i+1];
                 let b = data[i+2];
-                
+
                 let threshold = document.getElementById('threshold').value;
                 if(!(r <= threshold && g <= threshold && b <= threshold)) {
+                    let circleColor;
                     let circleSize = document.getElementById('circleSize').value;
-                    let circleColor = document.getElementById('colorChoice').value;
+                    if (document.getElementById('colorChoice').value == 'pixel_color') {
+                        circleColor = `rgb(${r*5},${g*5},${b*5})`;
+                    } else {
+                        circleColor = document.getElementById('colorChoice').value;
+                    }
                     let circleThickness = document.getElementById('circleThickness').value;
                     let x = (i / 4) % canvas.width;
                     let y = Math.floor((i / 4) / canvas.width);
@@ -191,7 +209,7 @@
 
             // Move the magnifier glass
             magnifier.style.left = `${cx - radius}px`;
-            magnifier.style.top = `${cy - radius}px`;
+            magnifier.style.top = `${cy - radius + 50}px`;
 
             // Display the magnifier glass
             magnifier.style.display = 'block';
@@ -204,10 +222,11 @@
             magnifier.style.backgroundSize = `${canvas.width * magnifyPower}px ${canvas.height * magnifyPower}px`;
             magnifier.style.backgroundPosition = `-${cx * magnifyPower - radius}px -${cy * magnifyPower - radius}px`;
         }
-    // add this script to the bottom of your existing script
+    
     window.onload = function() {
         document.getElementById('circleSizeValue').textContent = document.getElementById('circleSize').value;
         document.getElementById('circleThicknessValue').textContent = document.getElementById('circleThickness').value;
+        document.getElementById('maxCircles').textContent = document.getElementById('threshold').value;
         document.getElementById('thresholdValue').textContent = document.getElementById('threshold').value;
         document.getElementById('magnifyPowerValue').textContent = document.getElementById('magnifyPower').value;
     };
