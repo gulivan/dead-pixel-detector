@@ -10,6 +10,13 @@
             margin-bottom: 20px;
         }
 
+        .input-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 300px;
+        }
+
         #drop_zone {
             border: 2px dashed #bbb;
             padding: 50px;
@@ -43,40 +50,48 @@
         <div id="drop_zone">Drop files here</div>
 
         <label for="colorChoice">Choose a color:</label>
-        <select name="colors" id="colorChoice">
-            <option value="yellow">Yellow</option>
-            <option value="orange">Orange</option>
-            <option value="pink">Pink</option>
-            <option value="green">Green</option>
-            <option value="violet">Violet</option>
-        </select>
+        <div class="input-wrapper">
+            <select name="colors" id="colorChoice">
+                <option value="yellow">Yellow</option>
+                <option value="orange">Orange</option>
+                <option value="pink">Pink</option>
+                <option value="green">Green</option>
+                <option value="violet">Violet</option>
+            </select>
+        </div>
 
         <label for="circleSize">Circle Size:</label>
-        <input type="range" id="circleSize" name="circleSize" min="1" max="100" value="20">
-        <span id="circleSizeValue"></span>
+        <div class="input-wrapper">
+            <input type="range" id="circleSize" name="circleSize" min="1" max="100" value="20">
+            <span id="circleSizeValue"></span>
+        </div>
 
         <label for="circleThickness">Circle Thickness:</label>
-        <input type="range" id="circleThickness" name="circleThickness" min="1" max="10" value="2">
-        <span id="circleThicknessValue"></span>
+        <div class="input-wrapper">
+            <input type="range" id="circleThickness" name="circleThickness" min="1" max="10" value="2">
+            <span id="circleThicknessValue"></span>
+        </div>
 
         <label for="threshold">Threshold:</label>
-        <input type="range" id="threshold" name="threshold" min="0" max="255" value="20">
-        <span id="thresholdValue"></span>
+        <div class="input-wrapper">
+            <input type="range" id="threshold" name="threshold" min="0" max="255" value="20">
+            <span id="thresholdValue"></span>
+        </div>
 
         <label for="magnifyPower">Magnifying Power:</label>
-        <input type="range" id="magnifyPower" name="magnifyPower" min="1" max="10" value="3">
-        <span id="magnifyPowerValue"></span>
+        <div class="input-wrapper">
+            <input type="range" id="magnifyPower" name="magnifyPower" min="1" max="10" value="3">
+            <span id="magnifyPowerValue"></span>
+        </div>
 
         <button id="processImage">Process Image</button>
     </div>
-    
+
     <img id="uploadedImage" style="display:none"/>
     <canvas id="canvas"></canvas>
     <div id="magnifier"></div>
-
-
     <script>
-        const dropZone = document.getElementById('drop_zone');
+       const dropZone = document.getElementById('drop_zone');
         const fileUpload = document.getElementById('fileUpload');
         const uploadedImage = document.getElementById('uploadedImage');
         const canvas = document.getElementById('canvas');
@@ -188,6 +203,13 @@
             magnifier.style.backgroundSize = `${canvas.width * magnifyPower}px ${canvas.height * magnifyPower}px`;
             magnifier.style.backgroundPosition = `-${cx * magnifyPower - radius}px -${cy * magnifyPower - radius}px`;
         }
+    // add this script to the bottom of your existing script
+    window.onload = function() {
+        document.getElementById('circleSizeValue').textContent = document.getElementById('circleSize').value;
+        document.getElementById('circleThicknessValue').textContent = document.getElementById('circleThickness').value;
+        document.getElementById('thresholdValue').textContent = document.getElementById('threshold').value;
+        document.getElementById('magnifyPowerValue').textContent = document.getElementById('magnifyPower').value;
+    };
     </script>
 </body>
 </html>
