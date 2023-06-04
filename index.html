@@ -3,13 +3,22 @@
 <head>
     <title>Image Processing</title>
     <style>
+        #inputs {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
         #drop_zone {
             border: 2px dashed #bbb;
             padding: 50px;
             width: 200px;
             height: 200px;
             text-align: center;
+            margin-bottom: 20px;
         }
+
         /* Styling for magnifier */
         #magnifier {
             border: 2px solid #fff;
@@ -22,41 +31,49 @@
             display: none;
             background-repeat: no-repeat;
         }
+
+        canvas {
+            max-width: 100%;
+        }
     </style>
 </head>
 <body>
-    <input type="file" id="fileUpload" accept="image/*" />
-    <div id="drop_zone">Drop files here</div>
+    <div id="inputs">
+        <input type="file" id="fileUpload" accept="image/*" />
+        <div id="drop_zone">Drop files here</div>
+
+        <label for="colorChoice">Choose a color:</label>
+        <select name="colors" id="colorChoice">
+            <option value="yellow">Yellow</option>
+            <option value="orange">Orange</option>
+            <option value="pink">Pink</option>
+            <option value="green">Green</option>
+            <option value="violet">Violet</option>
+        </select>
+
+        <label for="circleSize">Circle Size:</label>
+        <input type="range" id="circleSize" name="circleSize" min="1" max="100" value="20">
+        <span id="circleSizeValue"></span>
+
+        <label for="circleThickness">Circle Thickness:</label>
+        <input type="range" id="circleThickness" name="circleThickness" min="1" max="10" value="2">
+        <span id="circleThicknessValue"></span>
+
+        <label for="threshold">Threshold:</label>
+        <input type="range" id="threshold" name="threshold" min="0" max="255" value="20">
+        <span id="thresholdValue"></span>
+
+        <label for="magnifyPower">Magnifying Power:</label>
+        <input type="range" id="magnifyPower" name="magnifyPower" min="1" max="10" value="3">
+        <span id="magnifyPowerValue"></span>
+
+        <button id="processImage">Process Image</button>
+    </div>
+    
     <img id="uploadedImage" style="display:none"/>
     <canvas id="canvas"></canvas>
     <div id="magnifier"></div>
 
-    <label for="colorChoice">Choose a color:</label>
-    <select name="colors" id="colorChoice">
-        <option value="yellow">Yellow</option>
-        <option value="orange">Orange</option>
-        <option value="pink">Pink</option>
-        <option value="green">Green</option>
-        <option value="violet">Violet</option>
-    </select>
-
-    <label for="circleSize">Circle Size:</label>
-    <input type="range" id="circleSize" name="circleSize" min="1" max="100" value="20">
-    <span id="circleSizeValue"></span>
-
-    <label for="circleThickness">Circle Thickness:</label>
-    <input type="range" id="circleThickness" name="circleThickness" min="1" max="10" value="2">
-    <span id="circleThicknessValue"></span>
-
-    <label for="threshold">Threshold:</label>
-    <input type="range" id="threshold" name="threshold" min="0" max="255" value="20">
-    <span id="thresholdValue"></span>
-
-    <label for="magnifyPower">Magnifying Power:</label>
-    <input type="range" id="magnifyPower" name="magnifyPower" min="1" max="10" value="3">
-    <span id="magnifyPowerValue"></span>
-
-    <button id="processImage">Process Image</button>
 
     <script>
         const dropZone = document.getElementById('drop_zone');
